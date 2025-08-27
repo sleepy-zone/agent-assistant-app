@@ -84,7 +84,7 @@ const GroupManager: React.FC<GroupManagerProps> = ({ itemType, onGroupCreated })
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 px-4">
       {/* 创建分组表单 */}
       {isCreating ? (
         <div className="border border-gray-200 rounded-lg p-4">

@@ -95,12 +95,12 @@ function App(): React.JSX.Element {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-0 py-2">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* 主内容区 */}
           <div className="flex-1">
             {/* 标签页导航 */}
-            <div className="border-b border-gray-200 mb-6">
+            <div className="border-b border-gray-200 mb-4 px-8">
               <nav className="-mb-px flex space-x-8">
                 {(['prompt', 'mcp', 'agent'] as const).map((tab) => (
                   <button

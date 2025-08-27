@@ -96,9 +96,9 @@ const ItemManager: React.FC<ItemManagerProps> = ({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 px-4">
       {/* 搜索和过滤栏 */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row gap-4 mb-4">
         <div className="flex-1">
           <input
             type="text"
