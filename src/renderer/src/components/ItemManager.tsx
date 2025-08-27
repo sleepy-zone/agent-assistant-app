@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { BaseItem } from '../types';
 import { useDataManager } from '../hooks/useDataManager';
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 interface ItemManagerProps {
   itemType: 'prompt' | 'mcp' | 'agent';
@@ -100,36 +103,33 @@ const ItemManager: React.FC<ItemManagerProps> = ({
       {/* 搜索和过滤栏 */}
       <div className="flex flex-col sm:flex-row gap-4 mb-4">
         <div className="flex-1">
-          <input
+          <Input
             type="text"
             placeholder={`搜索${getItemTypeLabel()}...`}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         <div className="sm:w-48">
-          <select
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={selectedGroup}
-            onChange={(e) => setSelectedGroup(e.target.value)}
-          >
-            <option value="all">所有分组</option>
-            {groups
-              .filter(group => group.itemType === itemType)
-              .map(group => (
-                <option key={group.id} value={group.id}>
-                  {group.name}
-                </option>
-              ))}
-          </select>
+          <Select value={selectedGroup} onValueChange={setSelectedGroup}>
+            <SelectTrigger>
+              <SelectValue placeholder="选择分组" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">所有分组</SelectItem>
+              {groups
+                .filter(group => group.itemType === itemType)
+                .map(group => (
+                  <SelectItem key={group.id} value={group.id}>
+                    {group.name}
+                  </SelectItem>
+                ))}
+            </SelectContent>
+          </Select>
         </div>
-        <button
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          onClick={onCreateItem}
-        >
+        <Button onClick={onCreateItem}>
           新建{getItemTypeLabel()}
-        </button>
+        </Button>
       </div>
 
       {/* 项目列表 */}

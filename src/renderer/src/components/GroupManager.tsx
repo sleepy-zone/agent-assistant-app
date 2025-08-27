@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { Group } from '../types';
 import { useGroups } from '../hooks/useGroups';
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 
 interface GroupManagerProps {
   itemType: 'prompt' | 'mcp' | 'agent';
@@ -92,9 +95,8 @@ const GroupManager: React.FC<GroupManagerProps> = ({ itemType, onGroupCreated })
           <div className="space-y-3">
             <div>
               <label className="block text-sm font-medium text-gray-700">分组名称</label>
-              <input
+              <Input
                 type="text"
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 value={newGroupName}
                 onChange={(e) => setNewGroupName(e.target.value)}
                 placeholder="输入分组名称"
@@ -102,8 +104,7 @@ const GroupManager: React.FC<GroupManagerProps> = ({ itemType, onGroupCreated })
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">分组描述</label>
-              <textarea
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              <Textarea
                 value={newGroupDescription}
                 onChange={(e) => setNewGroupDescription(e.target.value)}
                 placeholder="输入分组描述（可选）"
@@ -111,32 +112,27 @@ const GroupManager: React.FC<GroupManagerProps> = ({ itemType, onGroupCreated })
               />
             </div>
             <div className="flex space-x-2">
-              <button
-                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                onClick={handleCreateGroup}
-              >
+              <Button onClick={handleCreateGroup}>
                 创建
-              </button>
-              <button
-                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                onClick={() => {
-                  setIsCreating(false);
-                  setNewGroupName('');
-                  setNewGroupDescription('');
-                }}
-              >
+              </Button>
+              <Button variant="outline" onClick={() => {
+                setIsCreating(false);
+                setNewGroupName('');
+                setNewGroupDescription('');
+              }}>
                 取消
-              </button>
+              </Button>
             </div>
           </div>
         </div>
       ) : (
-        <button
-          className="w-full px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-blue-400 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        <Button
+          variant="outline"
+          className="w-full border-2 border-dashed"
           onClick={() => setIsCreating(true)}
         >
           + 创建新分组
-        </button>
+        </Button>
       )}
 
       {/* 分组列表 */}
@@ -151,41 +147,33 @@ const GroupManager: React.FC<GroupManagerProps> = ({ itemType, onGroupCreated })
         ) : (
           filteredGroups.map(group => (
             <div key={group.id} className="border border-gray-200 rounded-lg p-4">
-              {editingGroupId === group.id ? (
-                <div className="space-y-3">
-                  <input
-                    type="text"
-                    className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                    defaultValue={group.name}
-                    onBlur={(e) => handleUpdateGroup(group.id, { name: e.target.value })}
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        handleUpdateGroup(group.id, { name: (e.target as HTMLInputElement).value });
-                      }
-                    }}
-                    autoFocus
-                  />
-                  <textarea
-                    className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                    defaultValue={group.description}
-                    onBlur={(e) => handleUpdateGroup(group.id, { description: e.target.value })}
-                    rows={2}
-                  />
-                  <div className="flex space-x-2">
-                    <button
-                      className="px-3 py-1 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600"
-                      onClick={() => setEditingGroupId(null)}
-                    >
-                      保存
-                    </button>
-                    <button
-                      className="px-3 py-1 border border-gray-300 text-gray-700 rounded-md text-sm hover:bg-gray-50"
-                      onClick={() => setEditingGroupId(null)}
-                    >
-                      取消
-                    </button>
-                  </div>
+            {editingGroupId === group.id ? (
+              <div className="space-y-3">
+                <Input
+                  type="text"
+                  defaultValue={group.name}
+                  onBlur={(e) => handleUpdateGroup(group.id, { name: e.target.value })}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      handleUpdateGroup(group.id, { name: (e.target as HTMLInputElement).value });
+                    }
+                  }}
+                  autoFocus
+                />
+                <Textarea
+                  defaultValue={group.description}
+                  onBlur={(e) => handleUpdateGroup(group.id, { description: e.target.value })}
+                  rows={2}
+                />
+                <div className="flex space-x-2">
+                  <Button size="sm" onClick={() => setEditingGroupId(null)}>
+                    保存
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => setEditingGroupId(null)}>
+                    取消
+                  </Button>
                 </div>
+              </div>
               ) : (
                 <div className="flex justify-between items-start">
                   <div>

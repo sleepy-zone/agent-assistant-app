@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { MCPConfig } from '../types';
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface MCPEditorProps {
   mcp?: MCPConfig;
@@ -91,9 +96,8 @@ const MCPEditor: React.FC<MCPEditorProps> = ({ mcp, onSave, onCancel }) => {
         <div className="grid grid-cols-1 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">名称 *</label>
-            <input
+            <Input
               type="text"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="输入 MCP 配置名称"
@@ -102,9 +106,8 @@ const MCPEditor: React.FC<MCPEditorProps> = ({ mcp, onSave, onCancel }) => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">服务器名称 *</label>
-            <input
+            <Input
               type="text"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={serverName}
               onChange={(e) => setServerName(e.target.value)}
               placeholder="输入服务器名称"
@@ -113,8 +116,7 @@ const MCPEditor: React.FC<MCPEditorProps> = ({ mcp, onSave, onCancel }) => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">描述</label>
-            <textarea
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            <Textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="输入描述（可选）"
@@ -124,49 +126,48 @@ const MCPEditor: React.FC<MCPEditorProps> = ({ mcp, onSave, onCancel }) => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">分组</label>
-            <select
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={groupId}
-              onChange={(e) => setGroupId(e.target.value)}
-            >
-              <option value="">无分组</option>
-              {groups.map(group => (
-                <option key={group.id} value={group.id}>{group.name}</option>
-              ))}
-            </select>
+            <Select value={groupId || "none"} onValueChange={(value) => setGroupId(value === "none" ? "" : value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="选择分组" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">无分组</SelectItem>
+                {groups.map(group => (
+                  <SelectItem key={group.id} value={group.id}>{group.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">标签</label>
-            <input
+            <Input
               type="text"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={tags}
               onChange={(e) => setTags(e.target.value)}
               placeholder="输入标签，用逗号分隔（可选）"
             />
           </div>
 
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="enabled"
               checked={enabled}
-              onChange={(e) => setEnabled(e.target.checked)}
+              onCheckedChange={(checked) => setEnabled(checked as boolean)}
             />
-            <label className="ml-2 block text-sm text-gray-700">启用配置</label>
+            <label htmlFor="enabled" className="text-sm text-gray-700">启用配置</label>
           </div>
         </div>
 
         {/* MCP 配置 */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">配置 (JSON) *</label>
-          <textarea
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+          <Textarea
             value={config}
             onChange={(e) => setConfig(e.target.value)}
             placeholder='{"apiKey": "your-api-key", "baseUrl": "https://api.example.com"}'
             rows={12}
+            className="font-mono text-sm"
           />
           <p className="mt-1 text-sm text-gray-500">输入有效的 JSON 配置</p>
         </div>
@@ -174,22 +175,19 @@ const MCPEditor: React.FC<MCPEditorProps> = ({ mcp, onSave, onCancel }) => {
 
       {/* 操作按钮 */}
       <div className="mt-8 flex justify-end space-x-3">
-        <button
-          type="button"
-          className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        <Button
+          variant="outline"
           onClick={onCancel}
           disabled={loading}
         >
           取消
-        </button>
-        <button
-          type="button"
-          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+        </Button>
+        <Button
           onClick={handleSave}
           disabled={loading}
         >
           {loading ? '保存中...' : '保存'}
-        </button>
+        </Button>
       </div>
     </div>
   );

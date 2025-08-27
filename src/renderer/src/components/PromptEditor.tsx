@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { PromptItem } from '../types';
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 interface PromptEditorProps {
   prompt?: PromptItem;
@@ -99,9 +103,8 @@ const PromptEditor: React.FC<PromptEditorProps> = ({ prompt, onSave, onCancel })
         <div className="grid grid-cols-1 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">名称 *</label>
-            <input
+            <Input
               type="text"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="输入 Prompt 名称"
@@ -110,8 +113,7 @@ const PromptEditor: React.FC<PromptEditorProps> = ({ prompt, onSave, onCancel })
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">描述</label>
-            <textarea
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            <Textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="输入描述（可选）"
@@ -121,23 +123,23 @@ const PromptEditor: React.FC<PromptEditorProps> = ({ prompt, onSave, onCancel })
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">分组</label>
-            <select
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={groupId}
-              onChange={(e) => setGroupId(e.target.value)}
-            >
-              <option value="">无分组</option>
-              {groups.map(group => (
-                <option key={group.id} value={group.id}>{group.name}</option>
-              ))}
-            </select>
+            <Select value={groupId || "none"} onValueChange={(value) => setGroupId(value === "none" ? "" : value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="选择分组" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">无分组</SelectItem>
+                {groups.map(group => (
+                  <SelectItem key={group.id} value={group.id}>{group.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">标签</label>
-            <input
+            <Input
               type="text"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={tags}
               onChange={(e) => setTags(e.target.value)}
               placeholder="输入标签，用逗号分隔（可选）"
@@ -148,12 +150,12 @@ const PromptEditor: React.FC<PromptEditorProps> = ({ prompt, onSave, onCancel })
         {/* Prompt 内容 */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Prompt 内容 *</label>
-          <textarea
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+          <Textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder="输入 Prompt 内容"
             rows={12}
+            className="font-mono text-sm"
           />
         </div>
 
@@ -161,38 +163,38 @@ const PromptEditor: React.FC<PromptEditorProps> = ({ prompt, onSave, onCancel })
         <div>
           <div className="flex items-center justify-between mb-2">
             <label className="block text-sm font-medium text-gray-700">变量定义</label>
-            <button
+            <Button
               type="button"
-              className="text-sm text-blue-600 hover:text-blue-800"
+              variant="ghost"
+              size="sm"
               onClick={addVariable}
             >
               + 添加变量
-            </button>
+            </Button>
           </div>
           <div className="space-y-2">
             {Object.entries(variables).map(([key, value], index) => (
               <div key={index} className="flex gap-2">
-                <input
+                <Input
                   type="text"
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={key}
                   onChange={(e) => updateVariable(index, e.target.value, value)}
                   placeholder="变量名"
                 />
-                <input
+                <Input
                   type="text"
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={value}
                   onChange={(e) => updateVariable(index, key, e.target.value)}
                   placeholder="默认值"
                 />
-                <button
+                <Button
                   type="button"
-                  className="px-3 py-2 text-red-600 hover:text-red-800"
+                  variant="destructive"
+                  size="sm"
                   onClick={() => removeVariable(index)}
                 >
                   删除
-                </button>
+                </Button>
               </div>
             ))}
           </div>
@@ -201,34 +203,31 @@ const PromptEditor: React.FC<PromptEditorProps> = ({ prompt, onSave, onCancel })
         {/* 模板 */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">模板</label>
-          <textarea
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+          <Textarea
             value={template}
             onChange={(e) => setTemplate(e.target.value)}
             placeholder="输入模板（可选）"
             rows={4}
+            className="font-mono text-sm"
           />
         </div>
       </div>
 
       {/* 操作按钮 */}
       <div className="mt-8 flex justify-end space-x-3">
-        <button
-          type="button"
-          className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        <Button
+          variant="outline"
           onClick={onCancel}
           disabled={loading}
         >
           取消
-        </button>
-        <button
-          type="button"
-          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+        </Button>
+        <Button
           onClick={handleSave}
           disabled={loading}
         >
           {loading ? '保存中...' : '保存'}
-        </button>
+        </Button>
       </div>
     </div>
   );

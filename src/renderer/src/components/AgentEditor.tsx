@@ -154,12 +154,12 @@ const AgentEditor: React.FC<AgentEditorProps> = ({ agent, onSave, onCancel }) =>
 
             <div className="space-y-2">
               <Label htmlFor="groupId">分组</Label>
-              <Select value={groupId} onValueChange={setGroupId}>
+              <Select value={groupId || "none"} onValueChange={(value) => setGroupId(value === "none" ? "" : value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="选择分组" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">无分组</SelectItem>
+                  <SelectItem value="none">无分组</SelectItem>
                   {groups.map(group => (
                     <SelectItem key={group.id} value={group.id}>{group.name}</SelectItem>
                   ))}
