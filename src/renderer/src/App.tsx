@@ -5,6 +5,7 @@ import PromptEditor from './components/PromptEditor';
 import MCPEditor from './components/MCPEditor';
 import AgentEditor from './components/AgentEditor';
 import { BaseItem, PromptItem, MCPConfig, AgentConfig } from './types';
+import { Button } from "@/components/ui/button";
 
 function App(): React.JSX.Element {
   const [activeTab, setActiveTab] = useState<'prompt' | 'mcp' | 'agent'>('prompt');
@@ -84,12 +85,13 @@ function App(): React.JSX.Element {
               <h1 className="text-lg font-semibold text-gray-900">Agent Assistant</h1>
             </div>
             <div className="flex items-center space-x-4 no-drag">
-              <button
-                className="px-3 py-2 text-sm text-gray-600 hover:text-gray-900"
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => setShowGroups(!showGroups)}
               >
                 {showGroups ? '隐藏分组' : '显示分组'}
-              </button>
+              </Button>
             </div>
           </div>
         </div>
