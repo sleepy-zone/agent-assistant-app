@@ -6,6 +6,8 @@ import MCPEditor from './components/MCPEditor';
 import AgentEditor from './components/AgentEditor';
 import { BaseItem, PromptItem, MCPConfig, AgentConfig } from './types';
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 
 function App(): React.JSX.Element {
   const [activeTab, setActiveTab] = useState<'prompt' | 'mcp' | 'agent'>('prompt');
@@ -102,65 +104,66 @@ function App(): React.JSX.Element {
           {/* 主内容区 */}
           <div className="flex-1">
             {/* 标签页导航 */}
-            <div className="border-b border-gray-200 mb-4 px-8">
-              <nav className="-mb-px flex space-x-8">
-                {(['prompt', 'mcp', 'agent'] as const).map((tab) => (
-                  <button
-                    key={tab}
-                    className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                      activeTab === tab
-                        ? 'border-blue-500 text-blue-600'
-                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                    }`}
-                    onClick={() => setActiveTab(tab)}
-                  >
-                    {getTabLabel(tab)}
-                  </button>
-                ))}
-              </nav>
-            </div>
-
-            {/* 编辑器或管理器 */}
-            {showEditor ? (
-              <div className="bg-white rounded-lg shadow">
-                {showEditor === 'prompt' && (
-                  <PromptEditor
-                    prompt={editingItem as PromptItem}
-                    onSave={handleSaveItem}
-                    onCancel={() => {
-                      setShowEditor(null);
-                      setEditingItem(null);
-                    }}
-                  />
-                )}
-                {showEditor === 'mcp' && (
-                  <MCPEditor
-                    mcp={editingItem as MCPConfig}
-                    onSave={handleSaveItem}
-                    onCancel={() => {
-                      setShowEditor(null);
-                      setEditingItem(null);
-                    }}
-                  />
-                )}
-                {showEditor === 'agent' && (
-                  <AgentEditor
-                    agent={editingItem as AgentConfig}
-                    onSave={handleSaveItem}
-                    onCancel={() => {
-                      setShowEditor(null);
-                      setEditingItem(null);
-                    }}
-                  />
-                )}
-              </div>
-            ) : (
-              <ItemManager
-                itemType={activeTab}
-                onEditItem={handleEditItem}
-                onCreateItem={handleCreateItem}
-              />
-            )}
+            <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'prompt' | 'mcp' | 'agent')} className="px-8">
+              <TabsList>
+                <TabsTrigger value="prompt">Prompts</TabsTrigger>
+                <TabsTrigger value="mcp">MCP 配置</TabsTrigger>
+                <TabsTrigger value="agent">Agent 配置</TabsTrigger>
+              </TabsList>
+              <TabsContent value={activeTab} className="mt-4">
+                {/* 编辑器或管理器 */}
+                <ItemManager
+                  itemType={activeTab}
+                  onEditItem={handleEditItem}
+                  onCreateItem={handleCreateItem}
+                />
+                
+                {/* Drawer 编辑器 */}
+                <Drawer open={!!showEditor} onOpenChange={(open) => !open && setShowEditor(null)}>
+                  <DrawerContent className="h-[90vh] max-w-4xl mx-auto">
+                    <DrawerHeader>
+                      <DrawerTitle>
+                        {showEditor === 'prompt' && (editingItem ? '编辑 Prompt' : '新建 Prompt')}
+                        {showEditor === 'mcp' && (editingItem ? '编辑 MCP 配置' : '新建 MCP 配置')}
+                        {showEditor === 'agent' && (editingItem ? '编辑 Agent 配置' : '新建 Agent 配置')}
+                      </DrawerTitle>
+                    </DrawerHeader>
+                    <div className="px-4 overflow-y-auto flex-1">
+                      {showEditor === 'prompt' && (
+                        <PromptEditor
+                          prompt={editingItem as PromptItem}
+                          onSave={handleSaveItem}
+                          onCancel={() => {
+                            setShowEditor(null);
+                            setEditingItem(null);
+                          }}
+                        />
+                      )}
+                      {showEditor === 'mcp' && (
+                        <MCPEditor
+                          mcp={editingItem as MCPConfig}
+                          onSave={handleSaveItem}
+                          onCancel={() => {
+                            setShowEditor(null);
+                            setEditingItem(null);
+                          }}
+                        />
+                      )}
+                      {showEditor === 'agent' && (
+                        <AgentEditor
+                          agent={editingItem as AgentConfig}
+                          onSave={handleSaveItem}
+                          onCancel={() => {
+                            setShowEditor(null);
+                            setEditingItem(null);
+                          }}
+                        />
+                      )}
+                    </div>
+                  </DrawerContent>
+                </Drawer>
+              </TabsContent>
+            </Tabs>
           </div>
 
           {/* 分组管理侧边栏 */}

@@ -4,6 +4,7 @@ import { useDataManager } from '../hooks/useDataManager';
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 interface ItemManagerProps {
   itemType: 'prompt' | 'mcp' | 'agent';
@@ -158,18 +159,18 @@ const ItemManager: React.FC<ItemManagerProps> = ({
                   <div className="flex items-center">
                     <h3 className="text-lg font-medium text-gray-900">{item.name}</h3>
                     {item.groupId && (
-                      <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      <Badge variant="secondary" className="ml-2">
                         {getGroupById(item.groupId)?.name}
-                      </span>
+                      </Badge>
                     )}
                   </div>
                   <p className="mt-1 text-sm text-gray-500">{item.description}</p>
                   {item.tags && item.tags.length > 0 && (
                     <div className="mt-2 flex flex-wrap gap-1">
                       {item.tags.map((tag, index) => (
-                        <span key={index} className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                        <Badge key={index} variant="outline">
                           {tag}
-                        </span>
+                        </Badge>
                       ))}
                     </div>
                   )}
