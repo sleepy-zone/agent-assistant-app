@@ -69,6 +69,14 @@ export class MenuManager {
             label: '粘贴',
             accelerator: 'CmdOrCtrl+V',
             role: 'paste'
+          },
+          {
+            type: 'separator'
+          },
+          {
+            label: '全选',
+            accelerator: 'CmdOrCtrl+A',
+            role: 'selectAll'
           }
         ]
       },
