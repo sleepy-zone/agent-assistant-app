@@ -120,45 +120,47 @@ function App(): React.JSX.Element {
                 
                 {/* Drawer 编辑器 */}
                 <Drawer open={!!showEditor} onOpenChange={(open) => !open && setShowEditor(null)}>
-                  <DrawerContent className="h-[90vh] max-w-4xl mx-auto">
-                    <DrawerHeader>
-                      <DrawerTitle>
-                        {showEditor === 'prompt' && (editingItem ? '编辑 Prompt' : '新建 Prompt')}
-                        {showEditor === 'mcp' && (editingItem ? '编辑 MCP 配置' : '新建 MCP 配置')}
-                        {showEditor === 'agent' && (editingItem ? '编辑 Agent 配置' : '新建 Agent 配置')}
-                      </DrawerTitle>
-                    </DrawerHeader>
-                    <div className="px-4 overflow-y-auto flex-1">
-                      {showEditor === 'prompt' && (
-                        <PromptEditor
-                          prompt={editingItem as PromptItem}
-                          onSave={handleSaveItem}
-                          onCancel={() => {
-                            setShowEditor(null);
-                            setEditingItem(null);
-                          }}
-                        />
-                      )}
-                      {showEditor === 'mcp' && (
-                        <MCPEditor
-                          mcp={editingItem as MCPConfig}
-                          onSave={handleSaveItem}
-                          onCancel={() => {
-                            setShowEditor(null);
-                            setEditingItem(null);
-                          }}
-                        />
-                      )}
-                      {showEditor === 'agent' && (
-                        <AgentEditor
-                          agent={editingItem as AgentConfig}
-                          onSave={handleSaveItem}
-                          onCancel={() => {
-                            setShowEditor(null);
-                            setEditingItem(null);
-                          }}
-                        />
-                      )}
+                  <DrawerContent className="w-3/4 sm:max-w-3xl">
+                    <div className="flex flex-col h-full">
+                      <DrawerHeader className="flex-shrink-0">
+                        <DrawerTitle>
+                          {showEditor === 'prompt' && (editingItem ? '编辑 Prompt' : '新建 Prompt')}
+                          {showEditor === 'mcp' && (editingItem ? '编辑 MCP 配置' : '新建 MCP 配置')}
+                          {showEditor === 'agent' && (editingItem ? '编辑 Agent 配置' : '新建 Agent 配置')}
+                        </DrawerTitle>
+                      </DrawerHeader>
+                      <div className="flex-1 overflow-y-auto px-4 pb-4">
+                        {showEditor === 'prompt' && (
+                          <PromptEditor
+                            prompt={editingItem as PromptItem}
+                            onSave={handleSaveItem}
+                            onCancel={() => {
+                              setShowEditor(null);
+                              setEditingItem(null);
+                            }}
+                          />
+                        )}
+                        {showEditor === 'mcp' && (
+                          <MCPEditor
+                            mcp={editingItem as MCPConfig}
+                            onSave={handleSaveItem}
+                            onCancel={() => {
+                              setShowEditor(null);
+                              setEditingItem(null);
+                            }}
+                          />
+                        )}
+                        {showEditor === 'agent' && (
+                          <AgentEditor
+                            agent={editingItem as AgentConfig}
+                            onSave={handleSaveItem}
+                            onCancel={() => {
+                              setShowEditor(null);
+                              setEditingItem(null);
+                            }}
+                          />
+                        )}
+                      </div>
                     </div>
                   </DrawerContent>
                 </Drawer>

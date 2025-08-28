@@ -82,11 +82,7 @@ const PromptEditor: React.FC<PromptEditorProps> = ({ prompt, onSave, onCancel })
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">
-        {prompt ? '编辑 Prompt' : '新建 Prompt'}
-      </h2>
-
+    <div className="flex flex-col h-full">
       {error && (
         <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
           <div className="flex items-center">
@@ -98,7 +94,7 @@ const PromptEditor: React.FC<PromptEditorProps> = ({ prompt, onSave, onCancel })
         </div>
       )}
 
-      <div className="space-y-6">
+      <div className="flex-1 overflow-y-auto space-y-6">
         {/* 基本信息 */}
         <div className="grid grid-cols-1 gap-6">
           <div>
@@ -117,7 +113,7 @@ const PromptEditor: React.FC<PromptEditorProps> = ({ prompt, onSave, onCancel })
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="输入描述（可选）"
-              rows={3}
+              rows={2}
             />
           </div>
 
