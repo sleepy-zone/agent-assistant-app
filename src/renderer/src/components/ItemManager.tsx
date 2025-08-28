@@ -283,7 +283,7 @@ const ItemManager: React.FC<ItemManagerProps> = ({
                         <h3 className="text-lg font-medium text-gray-900 truncate max-w-[180px]">{item.name}</h3>
                         {item.groupId && (
                           <Badge variant="secondary" className="ml-2">
-                            {getGroupById(item.groupId)?.name}
+                            {getGroupById(item.groupId)?.name || '无分组'}
                           </Badge>
                         )}
                       </div>
