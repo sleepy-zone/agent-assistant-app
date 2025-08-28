@@ -309,6 +309,14 @@ const ItemManager: React.FC<ItemManagerProps> = ({
                                 console.error('复制失败:', err);
                                 toast.error('复制失败');
                               }
+                            } else if (itemType === 'mcp' && 'config' in item) {
+                              try {
+                                await navigator.clipboard.writeText(JSON.stringify((item as any).config, null, 2));
+                                toast.success('MCP 配置复制成功');
+                              } catch (err) {
+                                console.error('复制 MCP 配置失败:', err);
+                                toast.error('复制 MCP 配置失败');
+                              }
                             }
                           }}
                         >

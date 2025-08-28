@@ -4,7 +4,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 
 interface MCPEditorProps {
   mcp?: MCPConfig;
@@ -15,9 +14,7 @@ interface MCPEditorProps {
 const MCPEditor: React.FC<MCPEditorProps> = ({ mcp, onSave, onCancel }) => {
   const [name, setName] = useState(mcp?.name || '');
   const [description, setDescription] = useState(mcp?.description || '');
-  const [serverName, setServerName] = useState(mcp?.serverName || '');
-  const [config, setConfig] = useState<string>(mcp?.config ? JSON.stringify(mcp.config, null, 2) : '{}');
-  const [enabled, setEnabled] = useState(mcp?.enabled ?? true);
+  const [config, setConfig] = useState<string>(mcp?.config ? JSON.stringify(mcp.config, null, 2) : '{\n  "mcpServers": {}\n}');
   const [tags, setTags] = useState<string>(mcp?.tags?.join(', ') || '');
   const [groupId, setGroupId] = useState<string>(mcp?.groupId || '');
   const [loading, setLoading] = useState(false);
@@ -39,8 +36,8 @@ const MCPEditor: React.FC<MCPEditorProps> = ({ mcp, onSave, onCancel }) => {
   }, []);
 
   const handleSave = async () => {
-    if (!name.trim() || !serverName.trim()) {
-      setError('名称和服务器名称不能为空');
+    if (!name.trim()) {
+      setError('名称不能为空');
       return;
     }
 
@@ -59,9 +56,9 @@ const MCPEditor: React.FC<MCPEditorProps> = ({ mcp, onSave, onCancel }) => {
       const mcpData = {
         name,
         description,
-        serverName,
+        serverName: name, // 使用名称作为服务器名称的默认值
         config: JSON.parse(config),
-        enabled,
+        enabled: true, // 默认启用
         tags: tags.split(',').map(tag => tag.trim()).filter(tag => tag),
         groupId: groupId || undefined
       };
@@ -105,16 +102,6 @@ const MCPEditor: React.FC<MCPEditorProps> = ({ mcp, onSave, onCancel }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">服务器名称 *</label>
-            <Input
-              type="text"
-              value={serverName}
-              onChange={(e) => setServerName(e.target.value)}
-              placeholder="输入服务器名称"
-            />
-          </div>
-
-          <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">描述</label>
             <Textarea
               value={description}
@@ -147,15 +134,6 @@ const MCPEditor: React.FC<MCPEditorProps> = ({ mcp, onSave, onCancel }) => {
               onChange={(e) => setTags(e.target.value)}
               placeholder="输入标签，用逗号分隔（可选）"
             />
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="enabled"
-              checked={enabled}
-              onCheckedChange={(checked) => setEnabled(checked as boolean)}
-            />
-            <label htmlFor="enabled" className="text-sm text-gray-700">启用配置</label>
           </div>
         </div>
 
