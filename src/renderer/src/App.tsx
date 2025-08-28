@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import ItemManager from './components/ItemManager';
 import PromptEditor from './components/PromptEditor';
 import MCPEditor from './components/MCPEditor';
@@ -7,6 +7,7 @@ import { BaseItem, PromptItem, MCPConfig, AgentConfig } from './types';
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { Toaster } from "@/components/ui/sonner";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 function App(): React.JSX.Element {
   const [activeTab, setActiveTab] = useState<'prompt' | 'mcp' | 'agent'>('prompt');
@@ -72,7 +73,7 @@ function App(): React.JSX.Element {
 
   const getTabLabel = (tab: 'prompt' | 'mcp' | 'agent') => {
     switch (tab) {
-      case 'prompt': return 'Prompts';
+      case 'prompt': return 'Prompt';
       case 'mcp': return 'MCP 配置';
       case 'agent': return 'Agent 配置';
       default: return '';
@@ -83,10 +84,10 @@ function App(): React.JSX.Element {
     <div className="min-h-screen bg-gray-50">
       {/* 顶部导航栏 */}
       <header className="h-10 bg-white shadow-sm border-b border-gray-200 pl-20 draggable-area">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-10">
             <div className="flex items-center">
-              <h1 className="text-sm font-semibold text-gray-900">Agent Assistant App</h1>
+              <h1 className="text-lg font-semibold text-gray-900">Agent Assistant</h1>
             </div>
             <div className="flex items-center space-x-4 no-drag">
               {/* 分类 Tabs 移动到右上角 */}
@@ -102,14 +103,16 @@ function App(): React.JSX.Element {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-0 py-2">
-        {/* 主内容区 */}
-        <ItemManager
-          itemType={activeTab}
-          onEditItem={handleEditItem}
-          onCreateItem={handleCreateItem}
-          refreshTrigger={refreshTrigger}
-        />
+      <SidebarProvider>
+        <div className="max-w-7xl mx-auto px-0 py-2">
+          {/* 主内容区 */}
+          <ItemManager
+            itemType={activeTab}
+            onEditItem={handleEditItem}
+            onCreateItem={handleCreateItem}
+            refreshTrigger={refreshTrigger}
+          />
+        </div>
         
         {/* Drawer 编辑器 */}
         <Drawer open={!!showEditor} onOpenChange={(open) => !open && setShowEditor(null)}>
@@ -157,7 +160,7 @@ function App(): React.JSX.Element {
             </div>
           </DrawerContent>
         </Drawer>
-      </div>
+      </SidebarProvider>
       <Toaster />
     </div>
   );
