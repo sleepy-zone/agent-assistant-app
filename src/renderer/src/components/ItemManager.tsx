@@ -131,107 +131,119 @@ const ItemManager: React.FC<ItemManagerProps> = ({
     <div className="flex h-[calc(100vh-80px)]">
       {/* 左侧分组侧边栏 */}
       <Sidebar className="w-64 border-r">
-        <SidebarContent>
-          <SidebarGroup className="pt-8">
-            <SidebarGroupLabel>分组管理</SidebarGroupLabel>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton 
-                  isActive={selectedGroup === 'all'}
-                  onClick={() => setSelectedGroup('all')}
-                >
-                  <FolderOpen className="w-4 h-4" />
-                  <span>所有项目</span>
-                  <Badge variant="secondary" className="ml-auto text-xs">
-                    {items.length}
-                  </Badge>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              
-              {currentTypeGroups.map(group => (
-                <SidebarMenuItem key={group.id}>
-                  <SidebarMenuButton
-                    isActive={selectedGroup === group.id}
-                    onClick={() => setSelectedGroup(group.id)}
-                    className="flex items-center justify-between pr-2"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Folder className="w-4 h-4" />
-                      <span>{group.name}</span>
-                      <Badge variant="secondary" className="ml-2 text-xs">
-                        {items.filter(item => item.groupId === group.id).length}
+        <SidebarContent className="flex flex-col h-full">
+          <div className="flex flex-col h-full">
+            {/* 分组列表区域 - 可滚动 */}
+            <div className="flex-1 overflow-y-auto">
+              <SidebarGroup className="pt-8">
+                <SidebarGroupLabel>分组管理</SidebarGroupLabel>
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton 
+                      isActive={selectedGroup === 'all'}
+                      onClick={() => setSelectedGroup('all')}
+                    >
+                      <FolderOpen className="w-4 h-4" />
+                      <span>所有项目</span>
+                      <Badge variant="secondary" className="ml-auto text-xs">
+                        {items.length}
                       </Badge>
-                    </div>
-                    <div className="flex space-x-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          // 编辑分组逻辑
-                          setNewGroupName(group.name);
-                          setNewGroupDescription(group.description || '');
-                          setEditingGroupId(group.id);
-                          setShowGroupDrawer(true);
-                        }}
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  
+                  {currentTypeGroups.map(group => (
+                    <SidebarMenuItem key={group.id}>
+                      <SidebarMenuButton
+                        isActive={selectedGroup === group.id}
+                        onClick={() => setSelectedGroup(group.id)}
+                        className="flex items-center justify-between pr-2"
                       >
-                        <Edit className="w-3 h-3" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6 text-red-500 hover:text-red-700"
-                        onClick={async (e) => {
-                          e.stopPropagation();
-                          if (window.confirm('确定要删除这个分组吗？这不会删除分组内的项目，但会将项目移至"无分组"状态。')) {
-                            try {
-                              await deleteGroup(group.id);
-                              // 如果当前选中的是被删除的分组，则切换到所有项目
-                              if (selectedGroup === group.id) {
-                                setSelectedGroup('all');
+                        <div className="flex items-center gap-2">
+                          <Folder className="w-4 h-4" />
+                          <span>{group.name}</span>
+                          <Badge variant="secondary" className="ml-2 text-xs">
+                            {items.filter(item => item.groupId === group.id).length}
+                          </Badge>
+                        </div>
+                        <div className="flex space-x-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              // 编辑分组逻辑
+                              setNewGroupName(group.name);
+                              setNewGroupDescription(group.description || '');
+                              setEditingGroupId(group.id);
+                              setShowGroupDrawer(true);
+                            }}
+                          >
+                            <Edit className="w-3 h-3" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6 text-red-500 hover:text-red-700"
+                            onClick={async (e) => {
+                              e.stopPropagation();
+                              if (window.confirm('确定要删除这个分组吗？这不会删除分组内的项目，但会将项目移至"无分组"状态。')) {
+                                try {
+                                  await deleteGroup(group.id);
+                                  // 如果当前选中的是被删除的分组，则切换到所有项目
+                                  if (selectedGroup === group.id) {
+                                    setSelectedGroup('all');
+                                  }
+                                  // 刷新分组列表
+                                  fetchGroups();
+                                } catch (err) {
+                                  console.error('删除分组失败:', err);
+                                  toast.error('删除分组失败: ' + (err instanceof Error ? err.message : '未知错误'));
+                                }
                               }
-                              // 刷新分组列表
-                              fetchGroups();
-                            } catch (err) {
-                              console.error('删除分组失败:', err);
-                              toast.error('删除分组失败: ' + (err instanceof Error ? err.message : '未知错误'));
-                            }
-                          }
-                        }}
-                      >
-                        <Trash2 className="w-3 h-3" />
-                      </Button>
-                    </div>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-              
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  onClick={() => setShowGroupDrawer(true)}
-                  className="text-blue-600 hover:text-blue-700"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>新建分组</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroup>
-          
-          {/* 搜索框 */}
-          <SidebarGroup>
-            <SidebarGroupLabel>搜索</SidebarGroupLabel>
-            <div className="px-2">
-              <Input
-                type="text"
-                placeholder={`搜索${getItemTypeLabel()}...`}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full"
-              />
+                            }}
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroup>
             </div>
-          </SidebarGroup>
+            
+            {/* 搜索框和新建分组按钮 - 固定在底部 */}
+            <div className="flex-shrink-0 pb-4">
+              <SidebarGroup>
+                <SidebarGroupLabel>搜索</SidebarGroupLabel>
+                <div className="px-2">
+                  <Input
+                    type="text"
+                    placeholder={`搜索${getItemTypeLabel()}...`}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full"
+                  />
+                </div>
+              </SidebarGroup>
+              
+              {/* 新建分组按钮 - 固定在底部 */}
+              <SidebarGroup className="px-2">
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      onClick={() => setShowGroupDrawer(true)}
+                      className="text-blue-600 hover:text-blue-700 w-full justify-center"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      <span>新建分组</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarGroup>
+            </div>
+          </div>
         </SidebarContent>
       </Sidebar>
 

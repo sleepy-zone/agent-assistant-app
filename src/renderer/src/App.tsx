@@ -104,7 +104,7 @@ function App(): React.JSX.Element {
       </header>
 
       <SidebarProvider>
-        <div className="max-w-7xl mx-auto px-0 py-2">
+        <div className="max-w-7xl mx-auto px-2 py-2" style={{ width: '100%' }}>
           {/* 主内容区 */}
           <ItemManager
             itemType={activeTab}
