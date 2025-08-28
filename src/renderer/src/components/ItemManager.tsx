@@ -15,6 +15,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Plus, Search, Edit, Copy, Trash2, FolderOpen, Folder } from 'lucide-react';
 
 interface ItemManagerProps {
@@ -52,6 +55,7 @@ const ItemManager: React.FC<ItemManagerProps> = ({
   const [showGroupDrawer, setShowGroupDrawer] = useState(false);
   const [newGroupName, setNewGroupName] = useState('');
   const [newGroupDescription, setNewGroupDescription] = useState('');
+  const [editingGroupId, setEditingGroupId] = useState<string | null>(null);
 
   // 获取数据
   useEffect(() => {
@@ -145,17 +149,58 @@ const ItemManager: React.FC<ItemManagerProps> = ({
               </SidebarMenuItem>
               
               {currentTypeGroups.map(group => (
-                <SidebarMenuItem key={group.id}>
-                  <SidebarMenuButton
-                    isActive={selectedGroup === group.id}
-                    onClick={() => setSelectedGroup(group.id)}
-                  >
-                    <Folder className="w-4 h-4" />
-                    <span>{group.name}</span>
-                    <Badge variant="secondary" className="ml-auto text-xs">
-                      {items.filter(item => item.groupId === group.id).length}
-                    </Badge>
-                  </SidebarMenuButton>
+                <SidebarMenuItem key={group.id} className="group">
+                  <div className="flex items-center">
+                    <SidebarMenuButton
+                      isActive={selectedGroup === group.id}
+                      onClick={() => setSelectedGroup(group.id)}
+                      className="flex-1"
+                    >
+                      <Folder className="w-4 h-4" />
+                      <span>{group.name}</span>
+                      <Badge variant="secondary" className="ml-auto text-xs">
+                        {items.filter(item => item.groupId === group.id).length}
+                      </Badge>
+                    </SidebarMenuButton>
+                    <div className="flex opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => {
+                          // 编辑分组逻辑
+                          setNewGroupName(group.name);
+                          setNewGroupDescription(group.description || '');
+                          setShowGroupDrawer(true);
+                        }}
+                      >
+                        <Edit className="w-3 h-3" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-red-500 hover:text-red-700"
+                        onClick={async () => {
+                          if (window.confirm('确定要删除这个分组吗？这不会删除分组内的项目。')) {
+                            try {
+                              await deleteGroup(group.id);
+                              // 如果当前选中的是被删除的分组，则切换到所有项目
+                              if (selectedGroup === group.id) {
+                                setSelectedGroup('all');
+                              }
+                              // 刷新分组列表
+                              fetchGroups();
+                            } catch (err) {
+                              console.error('删除分组失败:', err);
+                              toast.error('删除分组失败: ' + (err instanceof Error ? err.message : '未知错误'));
+                            }
+                          }
+                        }}
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  </div>
                 </SidebarMenuItem>
               ))}
               
@@ -297,8 +342,93 @@ const ItemManager: React.FC<ItemManagerProps> = ({
         </div>
       </div>
 
-      {/* 创建分组抽屉 */}
-      {/* 这里可以保持原有的抽屉逻辑 */}
+      {/* 分组抽屉 */}
+      <Drawer open={showGroupDrawer} onOpenChange={(open) => {
+        setShowGroupDrawer(open);
+        if (!open) {
+          // 关闭时重置表单
+          setNewGroupName('');
+          setNewGroupDescription('');
+          setEditingGroupId(null);
+        }
+      }}>
+        <DrawerContent className="w-3/4 sm:max-w-md">
+          <DrawerHeader>
+            <DrawerTitle>{editingGroupId ? '编辑分组' : '创建新分组'}</DrawerTitle>
+          </DrawerHeader>
+          <div className="p-4 space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="group-name">分组名称</Label>
+              <Input
+                id="group-name"
+                value={newGroupName}
+                onChange={(e) => setNewGroupName(e.target.value)}
+                placeholder="输入分组名称"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="group-description">分组描述</Label>
+              <Textarea
+                id="group-description"
+                value={newGroupDescription}
+                onChange={(e) => setNewGroupDescription(e.target.value)}
+                placeholder="输入分组描述（可选）"
+                rows={3}
+              />
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowGroupDrawer(false);
+                  setNewGroupName('');
+                  setNewGroupDescription('');
+                  setEditingGroupId(null);
+                }}
+              >
+                取消
+              </Button>
+              <Button
+                onClick={async () => {
+                  if (!newGroupName.trim()) return;
+                  
+                  try {
+                    if (editingGroupId) {
+                      // 编辑现有分组
+                      await updateGroup(editingGroupId, {
+                        name: newGroupName,
+                        description: newGroupDescription
+                      });
+                    } else {
+                      // 创建新分组
+                      await createGroup({
+                        name: newGroupName,
+                        description: newGroupDescription,
+                        itemType
+                      });
+                    }
+                    
+                    // 重置表单并关闭抽屉
+                    setNewGroupName('');
+                    setNewGroupDescription('');
+                    setEditingGroupId(null);
+                    setShowGroupDrawer(false);
+                    
+                    // 刷新分组列表
+                    fetchGroups();
+                  } catch (err) {
+                    console.error(`${editingGroupId ? '编辑' : '创建'}分组失败:`, err);
+                    alert(`${editingGroupId ? '编辑' : '创建'}分组失败: ` + (err instanceof Error ? err.message : '未知错误'));
+                  }
+                }}
+                disabled={!newGroupName.trim()}
+              >
+                {editingGroupId ? '保存' : '创建'}
+              </Button>
+            </div>
+          </div>
+        </DrawerContent>
+      </Drawer>
     </div>
   );
 };
