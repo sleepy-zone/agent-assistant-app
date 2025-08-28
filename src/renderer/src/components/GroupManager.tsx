@@ -55,7 +55,7 @@ const GroupManager: React.FC<GroupManagerProps> = ({ itemType, onGroupCreated })
   };
 
   const handleDeleteGroup = async (id: string) => {
-    if (window.confirm('确定要删除这个分组吗？这不会删除分组内的项目。')) {
+    if (window.confirm('确定要删除这个分组吗？这不会删除分组内的项目，但会将项目移至"无分组"状态。')) {
       try {
         await deleteGroup(id);
       } catch (err) {

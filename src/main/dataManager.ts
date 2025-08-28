@@ -161,8 +161,24 @@ export class GroupManager {
     const groups = data.groups || [];
     const initialLength = groups.length;
     
+    // 删除分组
     const filteredGroups = groups.filter(group => group.id !== id);
     data.groups = filteredGroups;
+    
+    // 将该分组下的所有项目设置为无分组状态
+    const collectionNames = ['prompts', 'mcpConfigs', 'agentConfigs'];
+    for (const collectionName of collectionNames) {
+      if (data[collectionName]) {
+        data[collectionName] = data[collectionName].map((item: any) => {
+          if (item.groupId === id) {
+            const { groupId, ...rest } = item;
+            return { ...rest, updatedAt: new Date() };
+          }
+          return item;
+        });
+      }
+    }
+    
     await this.storage.write(data);
     
     return filteredGroups.length < initialLength;

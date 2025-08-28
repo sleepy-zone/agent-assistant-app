@@ -149,28 +149,30 @@ const ItemManager: React.FC<ItemManagerProps> = ({
               </SidebarMenuItem>
               
               {currentTypeGroups.map(group => (
-                <SidebarMenuItem key={group.id} className="group">
-                  <div className="flex items-center">
-                    <SidebarMenuButton
-                      isActive={selectedGroup === group.id}
-                      onClick={() => setSelectedGroup(group.id)}
-                      className="flex-1"
-                    >
+                <SidebarMenuItem key={group.id}>
+                  <SidebarMenuButton
+                    isActive={selectedGroup === group.id}
+                    onClick={() => setSelectedGroup(group.id)}
+                    className="flex items-center justify-between pr-2"
+                  >
+                    <div className="flex items-center gap-2">
                       <Folder className="w-4 h-4" />
                       <span>{group.name}</span>
-                      <Badge variant="secondary" className="ml-auto text-xs">
+                      <Badge variant="secondary" className="ml-2 text-xs">
                         {items.filter(item => item.groupId === group.id).length}
                       </Badge>
-                    </SidebarMenuButton>
-                    <div className="flex opacity-0 group-hover:opacity-100 transition-opacity">
+                    </div>
+                    <div className="flex space-x-1">
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8"
-                        onClick={() => {
+                        className="h-6 w-6"
+                        onClick={(e) => {
+                          e.stopPropagation();
                           // 编辑分组逻辑
                           setNewGroupName(group.name);
                           setNewGroupDescription(group.description || '');
+                          setEditingGroupId(group.id);
                           setShowGroupDrawer(true);
                         }}
                       >
@@ -179,9 +181,10 @@ const ItemManager: React.FC<ItemManagerProps> = ({
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-red-500 hover:text-red-700"
-                        onClick={async () => {
-                          if (window.confirm('确定要删除这个分组吗？这不会删除分组内的项目。')) {
+                        className="h-6 w-6 text-red-500 hover:text-red-700"
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          if (window.confirm('确定要删除这个分组吗？这不会删除分组内的项目，但会将项目移至"无分组"状态。')) {
                             try {
                               await deleteGroup(group.id);
                               // 如果当前选中的是被删除的分组，则切换到所有项目
@@ -200,7 +203,7 @@ const ItemManager: React.FC<ItemManagerProps> = ({
                         <Trash2 className="w-3 h-3" />
                       </Button>
                     </div>
-                  </div>
+                  </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
               
