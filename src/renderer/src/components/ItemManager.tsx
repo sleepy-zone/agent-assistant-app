@@ -209,11 +209,22 @@ const ItemManager: React.FC<ItemManagerProps> = ({
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}
+                  
+                  {/* 新建分组按钮 - 紧挨在分组列表末尾 */}
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      onClick={() => setShowGroupDrawer(true)}
+                      className="w-full justify-center mt-2"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      <span>新建分组</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
                 </SidebarMenu>
               </SidebarGroup>
             </div>
             
-            {/* 搜索框和新建分组按钮 - 固定在底部 */}
+            {/* 搜索框 - 固定在底部 */}
             <div className="flex-shrink-0 pb-4">
               <SidebarGroup>
                 <SidebarGroupLabel>搜索</SidebarGroupLabel>
@@ -226,21 +237,6 @@ const ItemManager: React.FC<ItemManagerProps> = ({
                     className="w-full"
                   />
                 </div>
-              </SidebarGroup>
-              
-              {/* 新建分组按钮 - 固定在底部 */}
-              <SidebarGroup className="px-2">
-                <SidebarMenu>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton
-                      onClick={() => setShowGroupDrawer(true)}
-                      className="text-blue-600 hover:text-blue-700 w-full justify-center"
-                    >
-                      <Plus className="w-4 h-4 mr-2" />
-                      <span>新建分组</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                </SidebarMenu>
               </SidebarGroup>
             </div>
           </div>
