@@ -284,7 +284,7 @@ const ItemManager: React.FC<ItemManagerProps> = ({
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredItems.map(item => (
-                <div key={item.id} className="border border-gray-200 rounded-lg p-3 pl-4 hover:shadow-md transition-shadow h-full">
+                <div key={item.id} className="border border-gray-200 rounded-lg p-3 pl-4 hover:shadow-md transition-shadow h-full relative">
                   <div className="flex flex-col h-full">
                     <div className="flex justify-between items-center mb-1">
                       <h3 className="text-lg font-medium text-gray-900 truncate flex-1 mr-2">{item.name}</h3>
@@ -333,13 +333,6 @@ const ItemManager: React.FC<ItemManagerProps> = ({
                         </Button>
                       </div>
                     </div>
-                    {item.groupId && (
-                      <div className="mb-2">
-                        <Badge variant="secondary" className="text-xs">
-                          {getGroupById(item.groupId)?.name || '无分组'}
-                        </Badge>
-                      </div>
-                    )}
                     <p className="text-sm text-gray-500 flex-grow line-clamp-2">{item.description}</p>
                     {item.tags && item.tags.length > 0 && (
                       <div className="mt-2 flex flex-wrap gap-1">
@@ -353,6 +346,17 @@ const ItemManager: React.FC<ItemManagerProps> = ({
                     <div className="mt-2 text-xs text-gray-400">
                       创建时间: {new Date(item.createdAt).toLocaleString()}
                     </div>
+                    {item.groupId && (
+                      <div className="absolute bottom-0 right-0">
+                        <Badge 
+                          variant="secondary" 
+                          className="text-xs rounded-br-lg rounded-tl-lg"
+                          style={{ borderRadius: '12px 0px 6px 0' }}
+                        >
+                          {getGroupById(item.groupId)?.name || '无分组'}
+                        </Badge>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
