@@ -50,6 +50,9 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      electron-tray-window:
+        specifier: ^1.2.7
+        version: 1.2.7(electron@37.3.1)
       electron-updater:
         specifier: ^6.3.9
         version: 6.6.2
@@ -1863,6 +1866,11 @@ packages:
 
   electron-to-chromium@1.5.209:
     resolution: {integrity: sha512-Xoz0uMrim9ZETCQt8UgM5FxQF9+imA7PBpokoGcZloA1uw2LeHzTlip5cb5KOAsXZLjh/moN2vReN3ZjJmjI9A==}
+
+  electron-tray-window@1.2.7:
+    resolution: {integrity: sha512-/6C3kbcpKK+Ux+RMwPfWatXNrzhcZc4LMitiS1K4NipLrWzx2OM+XRp7xtpoWdrm/No+zGqFFqAt4Knpqd2nxg==}
+    peerDependencies:
+      electron: ^3.0.10
 
   electron-updater@6.6.2:
     resolution: {integrity: sha512-Cr4GDOkbAUqRHP5/oeOmH/L2Bn6+FQPxVLZtPbcmKZC63a1F3uu5EefYOssgZXG3u/zBlubbJ5PJdITdMVggbw==}
@@ -5520,6 +5528,10 @@ snapshots:
       - supports-color
 
   electron-to-chromium@1.5.209: {}
+
+  electron-tray-window@1.2.7(electron@37.3.1):
+    dependencies:
+      electron: 37.3.1
 
   electron-updater@6.6.2:
     dependencies:

@@ -71,40 +71,27 @@ function App(): React.JSX.Element {
     }
   };
 
-  const getTabLabel = (tab: 'prompt' | 'mcp' | 'agent') => {
-    switch (tab) {
-      case 'prompt': return 'Prompt';
-      case 'mcp': return 'MCP 配置';
-      case 'agent': return 'Agent 配置';
-      default: return '';
-    }
-  };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* 顶部导航栏 */}
-      <header className="h-10 bg-white shadow-sm border-b border-gray-200 pl-20 draggable-area">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-10">
-            <div className="flex items-center">
-              <h1 className="text-lg font-semibold text-gray-900">Agent Assistant</h1>
-            </div>
-            <div className="flex items-center space-x-4 no-drag">
-              {/* 分类 Tabs 移动到右上角 */}
-              <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'prompt' | 'mcp' | 'agent')}>
-                <TabsList className="h-8">
-                  <TabsTrigger value="prompt" className="text-xs px-2">Prompts</TabsTrigger>
-                  <TabsTrigger value="mcp" className="text-xs px-2">MCP 配置</TabsTrigger>
-                  {/* <TabsTrigger value="agent" className="text-xs px-2">Agent 配置</TabsTrigger> */}
-                </TabsList>
-              </Tabs>
-            </div>
+    <div className="min-h-screen bg-gray-50" style={{ width: '800px', height: '600px' }}>
+      {/* 顶部导航栏 - 简化版本 */}
+      <header className="h-12 bg-white shadow-sm border-b border-gray-200 flex items-center px-4">
+        <div className="flex items-center justify-between w-full">
+          <h1 className="text-lg font-semibold text-gray-900">Agent Assistant</h1>
+          <div className="flex items-center space-x-2">
+            {/* 分类 Tabs */}
+            <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'prompt' | 'mcp' | 'agent')}>
+              <TabsList className="h-8">
+                <TabsTrigger value="prompt" className="text-xs px-2">Prompts</TabsTrigger>
+                <TabsTrigger value="mcp" className="text-xs px-2">MCP</TabsTrigger>
+              </TabsList>
+            </Tabs>
           </div>
         </div>
       </header>
 
       <SidebarProvider>
-        <div className="max-w-7xl mx-auto px-2 py-2" style={{ width: '100%' }}>
+        <div className="px-2 py-2" style={{ height: 'calc(600px - 48px - 16px)' }}>
           {/* 主内容区 */}
           <ItemManager
             itemType={activeTab}
@@ -116,7 +103,7 @@ function App(): React.JSX.Element {
         
         {/* Drawer 编辑器 */}
         <Drawer open={!!showEditor} onOpenChange={(open) => !open && setShowEditor(null)} dismissible={false}>
-          <DrawerContent className="w-3/4 sm:max-w-3xl">
+          <DrawerContent className="h-5/6">
             <div className="flex flex-col h-full">
               <DrawerHeader className="flex-shrink-0">
                 <DrawerTitle>

@@ -1,41 +1,70 @@
-import { app, shell, BrowserWindow, ipcMain, Tray, Menu, nativeImage } from 'electron'
+import { app, BrowserWindow, ipcMain, Tray, nativeImage, screen } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/icon.png?asset'
 import { StorageManager } from './storage'
 import { DataManager, GroupManager } from './dataManager'
-import { MenuManager } from './menu'
 
 let mainWindow: BrowserWindow | null = null
 let tray: Tray | null = null
 let storageManager: StorageManager
 let dataManager: DataManager
 let groupManager: GroupManager
-let menuManager: MenuManager
 
 function createWindow(): void {
-  // Create the browser window.
+  // 获取系统托盘位置
+  const trayBounds = tray?.getBounds() || { x: 0, y: 0, width: 0, height: 0 }
+  const display = screen.getDisplayNearestPoint({ x: trayBounds.x, y: trayBounds.y })
+  
+  // 计算窗口位置，使其显示在托盘图标附近
+  const windowWidth = 800
+  const windowHeight = 600
+  let x = trayBounds.x + Math.floor(trayBounds.width / 2) - Math.floor(windowWidth / 2)
+  let y = trayBounds.y
+
+  // 确保窗口不会超出屏幕边界
+  if (x + windowWidth > display.workArea.x + display.workArea.width) {
+    x = display.workArea.x + display.workArea.width - windowWidth
+  }
+  if (x < display.workArea.x) {
+    x = display.workArea.x
+  }
+  
+  // 根据托盘位置决定窗口显示在上方还是下方
+  if (trayBounds.y > display.workArea.height / 2) {
+    // 托盘在屏幕下半部分，窗口显示在上方
+    y = trayBounds.y - windowHeight
+  } else {
+    // 托盘在屏幕上半部分，窗口显示在下方
+    y = trayBounds.y + trayBounds.height
+  }
+
+  // Create the browser window as a popup window
   mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 760,
+    width: windowWidth,
+    height: windowHeight,
+    x: x,
+    y: y,
     show: false,
-    center: true,
-    autoHideMenuBar: true,
-    titleBarStyle: 'hiddenInset',
-    ...(process.platform === 'linux' ? { icon } : {}),
+    frame: false,
+    resizable: false,
+    movable: false,
+    fullscreenable: false,
+    skipTaskbar: true,
+    backgroundColor: '#333333',
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
+      sandbox: false,
+      contextIsolation: true
     }
   })
 
-  mainWindow.on('ready-to-show', () => {
-    mainWindow!.show()
-  })
+  // 隐藏菜单栏
+  mainWindow.setMenuBarVisibility(false)
 
-  mainWindow.webContents.setWindowOpenHandler((details) => {
-    shell.openExternal(details.url)
-    return { action: 'deny' }
+  mainWindow.on('blur', () => {
+    if (mainWindow && !mainWindow.webContents.isDevToolsOpened()) {
+      mainWindow.hide()
+    }
   })
 
   // HMR for renderer base on electron-vite cli.
@@ -48,32 +77,11 @@ function createWindow(): void {
 }
 
 function createTray(): void {
-  if (!mainWindow) return
-
   // 创建系统托盘图标
   const trayIcon = nativeImage.createFromPath(join(__dirname, '../../resources/icon.png'))
   tray = new Tray(trayIcon.resize({ width: 16, height: 16 }))
   
-  // 创建托盘上下文菜单
-  const contextMenu = Menu.buildFromTemplate([
-    {
-      label: '打开',
-      click: () => {
-        if (mainWindow) {
-          mainWindow.show()
-          mainWindow.focus()
-        }
-      }
-    },
-    {
-      label: '退出',
-      click: () => {
-        app.quit()
-      }
-    }
-  ])
-  
-  tray.setContextMenu(contextMenu)
+  // 不设置上下文菜单，只通过点击事件控制窗口显示/隐藏
   tray.setIgnoreDoubleClickEvents(true)
   
   // 点击托盘图标切换窗口显示
@@ -82,6 +90,29 @@ function createTray(): void {
       if (mainWindow.isVisible()) {
         mainWindow.hide()
       } else {
+        // 重新计算窗口位置
+        const trayBounds = tray?.getBounds() || { x: 0, y: 0, width: 0, height: 0 }
+        const display = screen.getDisplayNearestPoint({ x: trayBounds.x, y: trayBounds.y })
+        
+        const windowWidth = 800
+        const windowHeight = 600
+        let x = trayBounds.x + Math.floor(trayBounds.width / 2) - Math.floor(windowWidth / 2)
+        let y = trayBounds.y
+
+        if (x + windowWidth > display.workArea.x + display.workArea.width) {
+          x = display.workArea.x + display.workArea.width - windowWidth
+        }
+        if (x < display.workArea.x) {
+          x = display.workArea.x
+        }
+        
+        if (trayBounds.y > display.workArea.height / 2) {
+          y = trayBounds.y - windowHeight
+        } else {
+          y = trayBounds.y + trayBounds.height
+        }
+
+        mainWindow.setPosition(x, y, false)
         mainWindow.show()
         mainWindow.focus()
       }
@@ -167,6 +198,11 @@ app.whenReady().then(async () => {
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
 
+  // 隐藏 dock 图标 (macOS)
+  if (process.platform === 'darwin' && app.dock) {
+    app.dock.hide()
+  }
+
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.
   // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
@@ -177,20 +213,14 @@ app.whenReady().then(async () => {
   // 初始化数据管理器
   await initializeDataManagers()
 
-  // 创建主窗口
-  createWindow()
-
   // 创建系统托盘
   createTray()
 
+  // 创建主窗口
+  createWindow()
+
   // 设置 IPC 处理
   setupIPC()
-
-  // 创建菜单管理器并设置菜单栏
-  if (mainWindow) {
-    menuManager = new MenuManager(mainWindow)
-    menuManager.createMenuBar()
-  }
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the

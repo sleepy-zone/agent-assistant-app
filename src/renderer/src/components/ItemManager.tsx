@@ -18,7 +18,7 @@ import {
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Search, Edit, Copy, Trash2, FolderOpen, Folder } from 'lucide-react';
+import { Plus, Edit, Copy, Trash2, FolderOpen, Folder } from 'lucide-react';
 
 interface ItemManagerProps {
   itemType: 'prompt' | 'mcp' | 'agent';
