@@ -95,7 +95,7 @@ function App(): React.JSX.Element {
                 <TabsList className="h-8">
                   <TabsTrigger value="prompt" className="text-xs px-2">Prompts</TabsTrigger>
                   <TabsTrigger value="mcp" className="text-xs px-2">MCP 配置</TabsTrigger>
-                  <TabsTrigger value="agent" className="text-xs px-2">Agent 配置</TabsTrigger>
+                  {/* <TabsTrigger value="agent" className="text-xs px-2">Agent 配置</TabsTrigger> */}
                 </TabsList>
               </Tabs>
             </div>
@@ -115,7 +115,7 @@ function App(): React.JSX.Element {
         </div>
         
         {/* Drawer 编辑器 */}
-        <Drawer open={!!showEditor} onOpenChange={(open) => !open && setShowEditor(null)}>
+        <Drawer open={!!showEditor} onOpenChange={(open) => !open && setShowEditor(null)} dismissible={false}>
           <DrawerContent className="w-3/4 sm:max-w-3xl">
             <div className="flex flex-col h-full">
               <DrawerHeader className="flex-shrink-0">

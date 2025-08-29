@@ -287,19 +287,12 @@ const ItemManager: React.FC<ItemManagerProps> = ({
                 <div key={item.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow h-full">
                   <div className="flex flex-col h-full">
                     <div className="flex justify-between items-start mb-2">
-                      <div className="flex items-center">
-                        <h3 className="text-lg font-medium text-gray-900 truncate max-w-[180px]">{item.name}</h3>
-                        {item.groupId && (
-                          <Badge variant="secondary" className="ml-2">
-                            {getGroupById(item.groupId)?.name || '无分组'}
-                          </Badge>
-                        )}
-                      </div>
+                      <h3 className="text-lg font-medium text-gray-900 truncate flex-1 mr-2">{item.name}</h3>
                       <div className="flex space-x-1">
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8"
+                          className="h-8 w-8 flex-shrink-0"
                           onClick={async () => {
                             if (itemType === 'prompt' && 'content' in item) {
                               try {
@@ -325,7 +318,7 @@ const ItemManager: React.FC<ItemManagerProps> = ({
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8"
+                          className="h-8 w-8 flex-shrink-0"
                           onClick={() => onEditItem?.(item)}
                         >
                           <Edit className="w-4 h-4" />
@@ -333,13 +326,20 @@ const ItemManager: React.FC<ItemManagerProps> = ({
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8"
+                          className="h-8 w-8 flex-shrink-0"
                           onClick={() => handleDelete(item.id)}
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
                     </div>
+                    {item.groupId && (
+                      <div className="mb-2">
+                        <Badge variant="secondary" className="text-xs">
+                          {getGroupById(item.groupId)?.name || '无分组'}
+                        </Badge>
+                      </div>
+                    )}
                     <p className="text-sm text-gray-500 flex-grow line-clamp-2">{item.description}</p>
                     {item.tags && item.tags.length > 0 && (
                       <div className="mt-2 flex flex-wrap gap-1">
@@ -370,7 +370,7 @@ const ItemManager: React.FC<ItemManagerProps> = ({
           setNewGroupDescription('');
           setEditingGroupId(null);
         }
-      }}>
+      }} dismissible={false} handleOnly={true}>
         <DrawerContent className="w-3/4 sm:max-w-md">
           <DrawerHeader>
             <DrawerTitle>{editingGroupId ? '编辑分组' : '创建新分组'}</DrawerTitle>
