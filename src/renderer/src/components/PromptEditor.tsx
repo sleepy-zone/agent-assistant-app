@@ -17,8 +17,6 @@ const PromptEditor: React.FC<PromptEditorProps> = ({ prompt, onSave, onCancel })
   const [content, setContent] = useState(prompt?.content || '');
   const [tags, setTags] = useState<string>(prompt?.tags?.join(', ') || '');
   const [groupId, setGroupId] = useState<string>(prompt?.groupId || '');
-  const [variables, setVariables] = useState<Record<string, string>>(prompt?.variables || {});
-  const [template, setTemplate] = useState<string>(prompt?.template || '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -52,9 +50,7 @@ const PromptEditor: React.FC<PromptEditorProps> = ({ prompt, onSave, onCancel })
         description,
         content,
         tags: tags.split(',').map(tag => tag.trim()).filter(tag => tag),
-        groupId: groupId || undefined,
-        variables: Object.keys(variables).length > 0 ? variables : undefined,
-        template: template || undefined
+        groupId: groupId || undefined
       };
 
       await onSave(prompt ? { ...promptData, id: prompt.id, createdAt: prompt.createdAt, updatedAt: new Date() } : promptData);
@@ -63,22 +59,6 @@ const PromptEditor: React.FC<PromptEditorProps> = ({ prompt, onSave, onCancel })
     } finally {
       setLoading(false);
     }
-  };
-
-  const addVariable = () => {
-    setVariables(prev => ({ ...prev, '': '' }));
-  };
-
-  const updateVariable = (index: number, key: string, value: string) => {
-    const entries = Object.entries(variables);
-    entries[index] = [key, value];
-    setVariables(Object.fromEntries(entries));
-  };
-
-  const removeVariable = (index: number) => {
-    const entries = Object.entries(variables);
-    entries.splice(index, 1);
-    setVariables(Object.fromEntries(entries));
   };
 
   return (
@@ -151,59 +131,6 @@ const PromptEditor: React.FC<PromptEditorProps> = ({ prompt, onSave, onCancel })
             onChange={(e) => setContent(e.target.value)}
             placeholder="输入 Prompt 内容"
             rows={12}
-            className="font-mono text-sm"
-          />
-        </div>
-
-        {/* 变量定义 */}
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <label className="block text-sm font-medium text-gray-700">变量定义</label>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={addVariable}
-            >
-              + 添加变量
-            </Button>
-          </div>
-          <div className="space-y-2">
-            {Object.entries(variables).map(([key, value], index) => (
-              <div key={index} className="flex gap-2">
-                <Input
-                  type="text"
-                  value={key}
-                  onChange={(e) => updateVariable(index, e.target.value, value)}
-                  placeholder="变量名"
-                />
-                <Input
-                  type="text"
-                  value={value}
-                  onChange={(e) => updateVariable(index, key, e.target.value)}
-                  placeholder="默认值"
-                />
-                <Button
-                  type="button"
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => removeVariable(index)}
-                >
-                  删除
-                </Button>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* 模板 */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">模板</label>
-          <Textarea
-            value={template}
-            onChange={(e) => setTemplate(e.target.value)}
-            placeholder="输入模板（可选）"
-            rows={4}
             className="font-mono text-sm"
           />
         </div>

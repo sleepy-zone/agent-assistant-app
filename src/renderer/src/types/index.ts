@@ -22,8 +22,6 @@ export interface Group {
 // Prompt 数据结构
 export interface PromptItem extends BaseItem {
   content: string;
-  variables?: Record<string, string>;
-  template?: string;
 }
 
 // MCP 配置数据结构
