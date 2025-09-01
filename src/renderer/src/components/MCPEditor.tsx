@@ -72,11 +72,7 @@ const MCPEditor: React.FC<MCPEditorProps> = ({ mcp, onSave, onCancel }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">
-        {mcp ? '编辑 MCP 配置' : '新建 MCP 配置'}
-      </h2>
-
+    <div className="flex flex-col h-full">
       {error && (
         <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
           <div className="flex items-center">
@@ -88,7 +84,7 @@ const MCPEditor: React.FC<MCPEditorProps> = ({ mcp, onSave, onCancel }) => {
         </div>
       )}
 
-      <div className="space-y-6">
+      <div className="flex-1 overflow-y-auto space-y-6">
         {/* 基本信息 */}
         <div className="grid grid-cols-1 gap-6">
           <div>
