@@ -77,7 +77,7 @@ function App(): React.JSX.Element {
       {/* 顶部导航栏 - 简化版本 */}
       <header className="h-12 bg-white shadow-sm border-b border-gray-200 flex items-center px-4">
         <div className="flex items-center justify-between w-full">
-          <h1 className="text-lg font-semibold text-gray-900">Agent Assistant</h1>
+          <h1 className="text-lg font-semibold text-transparent">Agent Assistant</h1>
           <div className="flex items-center space-x-2">
             {/* 分类 Tabs */}
             <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'prompt' | 'mcp' | 'agent')}>

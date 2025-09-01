@@ -135,8 +135,8 @@ const ItemManager: React.FC<ItemManagerProps> = ({
           <div className="flex flex-col h-full">
             {/* 分组列表区域 - 可滚动 */}
             <div className="flex-1 overflow-y-auto">
-              <SidebarGroup className="pt-8">
-                <SidebarGroupLabel>分组管理</SidebarGroupLabel>
+              <SidebarGroup className="pt-2">
+                <SidebarGroupLabel className="mb-2">分组管理</SidebarGroupLabel>
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton 
@@ -287,12 +287,12 @@ const ItemManager: React.FC<ItemManagerProps> = ({
                 <div key={item.id} className="border border-gray-200 rounded-lg p-3 pl-4 hover:shadow-md transition-shadow h-full relative min-h-30">
                   <div className="flex flex-col h-full">
                     <div className="flex justify-between items-center mb-1">
-                      <h3 className="text-lg font-medium text-gray-900 truncate flex-1 mr-2">{item.name}</h3>
+                      <h3 className="text-base font-semibold text-gray-900 truncate flex-1 mr-2">{item.name}</h3>
                       <div className="flex space-x-1">
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8 flex-shrink-0"
+                          className="h-6 w-6 flex-shrink-0"
                           onClick={async () => {
                             if (itemType === 'prompt' && 'content' in item) {
                               try {
@@ -318,7 +318,7 @@ const ItemManager: React.FC<ItemManagerProps> = ({
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8 flex-shrink-0"
+                          className="h-6 w-6 flex-shrink-0"
                           onClick={() => onEditItem?.(item)}
                         >
                           <Edit className="w-4 h-4" />
@@ -326,7 +326,7 @@ const ItemManager: React.FC<ItemManagerProps> = ({
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8 flex-shrink-0"
+                          className="h-6 w-6 flex-shrink-0"
                           onClick={() => handleDelete(item.id)}
                         >
                           <Trash2 className="w-4 h-4" />
