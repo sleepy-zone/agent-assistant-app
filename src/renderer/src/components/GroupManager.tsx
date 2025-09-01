@@ -182,7 +182,7 @@ const GroupManager: React.FC<GroupManagerProps> = ({ itemType, onGroupCreated })
                       <p className="mt-1 text-sm text-gray-500">{group.description}</p>
                     )}
                     <div className="mt-2 text-xs text-gray-400">
-                      创建时间: {new Date(group.createdAt).toLocaleString()}
+                      {new Date(group.createdAt).toLocaleString()}
                     </div>
                   </div>
                   <div className="flex space-x-1">

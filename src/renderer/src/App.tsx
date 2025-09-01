@@ -91,7 +91,7 @@ function App(): React.JSX.Element {
       </header>
 
       <SidebarProvider>
-        <div className="px-2 py-2" style={{ height: 'calc(600px - 48px - 16px)' }}>
+        <div className="px-2 py-2" style={{ height: 'calc(600px - 48px - 16px)', width: '100%' }}>
           {/* 主内容区 */}
           <ItemManager
             itemType={activeTab}
