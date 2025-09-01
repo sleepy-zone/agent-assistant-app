@@ -260,8 +260,7 @@ const ItemManager: React.FC<ItemManagerProps> = ({
           </div>
           
           <Button onClick={onCreateItem}>
-            <Plus className="w-4 h-4 mr-2" />
-            新建{getItemTypeLabel()}
+            新建 {getItemTypeLabel()}
           </Button>
         </div>
 
@@ -277,8 +276,7 @@ const ItemManager: React.FC<ItemManagerProps> = ({
                 开始创建您的第一个{getItemTypeLabel()}吧
               </p>
               <Button onClick={onCreateItem}>
-                <Plus className="w-4 h-4 mr-2" />
-                新建{getItemTypeLabel()}
+                新建 {getItemTypeLabel()}
               </Button>
             </div>
           ) : (
