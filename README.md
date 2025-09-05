@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="src/renderer/src/assets/app-icon.svg" width="60" height="60" alt="Agent Assistant App Icon">
+  <img src="src/renderer/src/assets/icon.svg" width="60" height="60" alt="Agent Assistant App Icon">
 </p>
 <h1 align="center" style="display: flex; align-items: center;">
   <strong>Agent Assistant App</strong>

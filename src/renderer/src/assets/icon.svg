@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512px" height="512px" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>app-icon</title>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="app-icon">
+            <circle id="椭圆形" fill="#C96442" fill-rule="nonzero" cx="256" cy="256" r="256"></circle>
+            <g id="编组" stroke-linecap="round" stroke-linejoin="round" transform="translate(94.9073, 94.9073)" stroke="#FFFFFF" stroke-width="3">
+                <circle id="椭圆形" fill="#FFFFFF" fill-rule="nonzero" cx="162.341463" cy="162.341463" r="51.2657253"></circle>
+                <line x1="162.341463" y1="111.075738" x2="162.341463" y2="25.6328626" id="路径"></line>
+                <line x1="162.341463" y1="213.607189" x2="162.341463" y2="299.050064" id="路径"></line>
+                <line x1="111.075738" y1="162.341463" x2="25.6328626" y2="162.341463" id="路径"></line>
+                <line x1="213.607189" y1="162.341463" x2="299.050064" y2="162.341463" id="路径"></line>
+                <line x1="126.028241" y1="126.028241" x2="59.8100128" y2="59.8100128" id="路径"></line>
+                <line x1="198.654685" y1="126.028241" x2="264.872914" y2="59.8100128" id="路径"></line>
+                <line x1="126.028241" y1="198.654685" x2="59.8100128" y2="264.872914" id="路径"></line>
+                <line x1="198.654685" y1="198.654685" x2="264.872914" y2="264.872914" id="路径"></line>
+                <circle id="椭圆形" fill="#FAF9F5" fill-rule="nonzero" cx="162.341463" cy="25.6328626" r="25.6328626"></circle>
+                <circle id="椭圆形" fill="#FAF9F5" fill-rule="nonzero" cx="162.341463" cy="299.050064" r="25.6328626"></circle>
+                <circle id="椭圆形" fill="#FAF9F5" fill-rule="nonzero" cx="25.6328626" cy="162.341463" r="25.6328626"></circle>
+                <circle id="椭圆形" fill="#FAF9F5" fill-rule="nonzero" cx="299.050064" cy="162.341463" r="25.6328626"></circle>
+                <circle id="椭圆形" fill="#FAF9F5" fill-rule="nonzero" cx="59.8100128" cy="59.8100128" r="25.6328626"></circle>
+                <circle id="椭圆形" fill="#FAF9F5" fill-rule="nonzero" cx="264.872914" cy="59.8100128" r="25.6328626"></circle>
+                <circle id="椭圆形" fill="#FAF9F5" fill-rule="nonzero" cx="59.8100128" cy="264.872914" r="25.6328626"></circle>
+                <circle id="椭圆形" fill="#FAF9F5" fill-rule="nonzero" cx="264.872914" cy="264.872914" r="25.6328626"></circle>
+            </g>
+        </g>
+    </g>
+</svg>
