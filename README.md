@@ -1,4 +1,10 @@
-# Agent Assistant App
+<p align="center">
+  <img src="https://raw.githubusercontent.com/sleepy-zone/mp-pic-bed/main/2025/09/05/1757053694355-292c3b42-d0a8-484a-a806-66b351bf0447.png">
+</p>
+
+<h1 align="center">
+  <strong>Agent Assistant App</strong>
+</h1>
 
 一个基于 Electron 的桌面应用，用于管理 AI 相关的 Prompt、MCP 配置和 Agent 配置。
 
