@@ -1,7 +1,7 @@
 # Implementation Plan
 
 ## Overview
-创建一个 Electron MenuBar 应用，用于管理 agent 相关的 prompt、MCP 配置和 agent 配置，支持分组管理和增删改查操作，数据存储在本地。应用采用简洁的系统菜单风格，点击菜单栏图标即可展示管理窗口。
+创建一个 Electron 独立窗口应用，用于管理 agent 相关的 prompt、MCP 配置和 agent 配置，支持分组管理和增删改查操作，数据存储在本地。应用采用标准的桌面应用窗口风格，启动时直接显示主窗口，支持创建多个独立窗口来管理不同项目。
 
 ## Types
 
@@ -66,7 +66,6 @@ interface StorageData {
 需要创建新的数据管理模块、UI 组件和配置文件，修改主进程以支持菜单栏应用。
 
 ### 新建文件
-- `src/main/menu.ts` - 菜单栏管理
 - `src/main/storage.ts` - 本地存储管理
 - `src/main/dataManager.ts` - 数据管理逻辑
 - `src/renderer/src/types/index.ts` - 类型定义
@@ -94,9 +93,8 @@ interface StorageData {
 ### 新增函数
 
 #### 主进程函数 (src/main/index.ts)
-- `createMenuBar()` - 创建菜单栏应用
-- `toggleWindow()` - 切换窗口显示/隐藏
-- `setupMenuEvents()` - 设置菜单事件监听
+- `createWindow()` - 创建主应用窗口
+- `setupIPC()` - 设置 IPC 通信处理
 
 #### 存储管理函数 (src/main/storage.ts)
 - `initializeStorage()` - 初始化存储

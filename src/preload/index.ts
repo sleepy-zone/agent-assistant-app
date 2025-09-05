@@ -49,13 +49,6 @@ const api = {
   getStoragePath: (): Promise<string> => 
     ipcRenderer.invoke('get-storage-path'),
 
-  // 窗口管理 API
-  createDetachedWindow: (windowId: string, title: string): Promise<boolean> => 
-    ipcRenderer.invoke('create-detached-window', windowId, title),
-  
-  closeDetachedWindow: (windowId: string): Promise<boolean> => 
-    ipcRenderer.invoke('close-detached-window', windowId),
-
   // 事件监听
   on: (channel: string, func: (...args: any[]) => void) => {
     ipcRenderer.on(channel, (_, ...args) => func(...args))

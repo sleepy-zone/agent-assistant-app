@@ -22,10 +22,6 @@ interface Api {
   restoreData: (backupFile?: string) => Promise<any>
   getStoragePath: () => Promise<string>
 
-  // 窗口管理 API
-  createDetachedWindow: (windowId: string, title: string) => Promise<boolean>
-  closeDetachedWindow: (windowId: string) => Promise<boolean>
-
   // 事件监听
   on: (channel: string, func: (...args: any[]) => void) => void
   off: (channel: string, func: (...args: any[]) => void) => void

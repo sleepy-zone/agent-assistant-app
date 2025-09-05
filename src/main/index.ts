@@ -9,81 +9,13 @@ let storageManager: StorageManager
 let dataManager: DataManager
 let groupManager: GroupManager
 
-// 存储所有打开的窗口
-const openWindows: Map<string, BrowserWindow> = new Map()
-
-// 创建独立窗口
-async function createDetachedWindow(windowId: string, title: string): Promise<boolean> {
-  // 如果窗口已存在，直接显示
-  if (openWindows.has(windowId)) {
-    const existingWindow = openWindows.get(windowId)
-    if (existingWindow) {
-      existingWindow.show()
-      existingWindow.focus()
-      return true
-    }
-  }
-
-  // 创建新窗口
-  const detachedWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
-    show: true,
-    frame: true,
-    resizable: true,
-    movable: true,
-    fullscreenable: true,
-    skipTaskbar: false,
-    backgroundColor: '#ffffff',
-    webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
-      sandbox: false,
-      contextIsolation: true
-    }
-  })
-
-  // 设置窗口标题
-  detachedWindow.setTitle(title)
-
-  // 存储窗口引用
-  openWindows.set(windowId, detachedWindow)
-
-  // 监听窗口关闭事件
-  detachedWindow.on('closed', () => {
-    openWindows.delete(windowId)
-  })
-
-  // 显示窗口
-  detachedWindow.show()
-  detachedWindow.focus()
-
-  // 加载内容
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    detachedWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
-  } else {
-    detachedWindow.loadFile(join(__dirname, '../renderer/index.html'))
-  }
-
-  return true
-}
-
-// 关闭独立窗口
-function closeDetachedWindow(windowId: string): boolean {
-  const window = openWindows.get(windowId)
-  if (window) {
-    window.close()
-    openWindows.delete(windowId)
-    return true
-  }
-  return false
-}
 
 function createWindow(): void {
   // Create a regular application window
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
-    show: true,
+    show: false,
     frame: true,
     autoHideMenuBar: true,
     resizable: true,
@@ -101,6 +33,13 @@ function createWindow(): void {
 
   // 显示菜单栏
   mainWindow.setMenuBarVisibility(true)
+
+  // 当窗口准备就绪时显示窗口
+  mainWindow.on('ready-to-show', () => {
+    if (mainWindow) {
+      mainWindow.show()
+    }
+  })
 
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
@@ -181,14 +120,6 @@ function setupIPC(): void {
     return storageManager['dbPath']
   })
 
-  // 窗口管理 IPC 处理
-  ipcMain.handle('create-detached-window', async (_, windowId: string, title: string) => {
-    return await createDetachedWindow(windowId, title)
-  })
-
-  ipcMain.handle('close-detached-window', async (_, windowId: string) => {
-    return closeDetachedWindow(windowId)
-  })
 }
 
 // This method will be called when Electron has finished
