@@ -13,12 +13,13 @@ let groupManager: GroupManager
 function createWindow(): void {
   // Create a regular application window
   mainWindow = new BrowserWindow({
-    width: 1200,
+    width: 1140,
     height: 800,
     show: false,
     frame: true,
     autoHideMenuBar: true,
     resizable: true,
+    center: true,
     movable: true,
     titleBarStyle: 'hiddenInset',
     fullscreenable: true,
