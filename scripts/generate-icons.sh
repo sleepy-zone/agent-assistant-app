@@ -21,12 +21,6 @@ OUTPUT_DIR="build"
 # 确保输出目录存在
 mkdir -p "$OUTPUT_DIR"
 
-echo "📄 检查源文件..."
-if [ ! -f "$SVG_PATH" ]; then
-    echo "❌ 未找到 SVG 源文件: $SVG_PATH"
-    exit 1
-fi
-
 # 如果 PNG 文件不存在，则从 SVG 生成
 if [ ! -f "$PNG_PATH" ]; then
     echo "🔄 从 SVG 生成 PNG..."
