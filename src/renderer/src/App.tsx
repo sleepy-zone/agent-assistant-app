@@ -72,13 +72,14 @@ function App(): React.JSX.Element {
   };
 
 
+
   return (
-    <div className="min-h-screen bg-gray-50" style={{ width: '800px', height: '600px' }}>
+    <div className="min-h-screen bg-gray-50">
       {/* 顶部导航栏 - 简化版本 */}
-      <header className="h-12 bg-white shadow-sm border-b border-gray-200 flex items-center px-4">
+      <header className="h-12 bg-white shadow-sm border-b border-gray-200 flex items-center px-4 draggable-area">
         <div className="flex items-center justify-between w-full">
           <h1 className="text-lg font-semibold text-transparent">Agent Assistant</h1>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 no-drag">
             {/* 分类 Tabs */}
             <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'prompt' | 'mcp' | 'agent')}>
               <TabsList className="h-8">

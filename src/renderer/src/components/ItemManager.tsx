@@ -135,7 +135,7 @@ const ItemManager: React.FC<ItemManagerProps> = ({
           <div className="flex flex-col h-full">
             {/* 分组列表区域 - 可滚动 */}
             <div className="flex-1 overflow-y-auto">
-              <SidebarGroup className="pt-2">
+              <SidebarGroup className="pt-10">
                 <SidebarGroupLabel className="mb-2">分组管理</SidebarGroupLabel>
                 <SidebarMenu>
                   <SidebarMenuItem>

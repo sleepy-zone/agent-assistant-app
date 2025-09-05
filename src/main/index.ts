@@ -1,56 +1,40 @@
-import { app, BrowserWindow, ipcMain, Tray, nativeImage, screen } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { StorageManager } from './storage'
 import { DataManager, GroupManager } from './dataManager'
 
 let mainWindow: BrowserWindow | null = null
-let tray: Tray | null = null
 let storageManager: StorageManager
 let dataManager: DataManager
 let groupManager: GroupManager
 
-function createWindow(): void {
-  // 获取系统托盘位置
-  const trayBounds = tray?.getBounds() || { x: 0, y: 0, width: 0, height: 0 }
-  const display = screen.getDisplayNearestPoint({ x: trayBounds.x, y: trayBounds.y })
-  
-  // 计算窗口位置，使其显示在托盘图标附近
-  const windowWidth = 800
-  const windowHeight = 600
-  let x = trayBounds.x + Math.floor(trayBounds.width / 2) - Math.floor(windowWidth / 2)
-  let y = trayBounds.y
+// 存储所有打开的窗口
+const openWindows: Map<string, BrowserWindow> = new Map()
 
-  // 确保窗口不会超出屏幕边界
-  if (x + windowWidth > display.workArea.x + display.workArea.width) {
-    x = display.workArea.x + display.workArea.width - windowWidth
-  }
-  if (x < display.workArea.x) {
-    x = display.workArea.x
-  }
-  
-  // 根据托盘位置决定窗口显示在上方还是下方
-  if (trayBounds.y > display.workArea.height / 2) {
-    // 托盘在屏幕下半部分，窗口显示在上方
-    y = trayBounds.y - windowHeight
-  } else {
-    // 托盘在屏幕上半部分，窗口显示在下方
-    y = trayBounds.y + trayBounds.height
+// 创建独立窗口
+async function createDetachedWindow(windowId: string, title: string): Promise<boolean> {
+  // 如果窗口已存在，直接显示
+  if (openWindows.has(windowId)) {
+    const existingWindow = openWindows.get(windowId)
+    if (existingWindow) {
+      existingWindow.show()
+      existingWindow.focus()
+      return true
+    }
   }
 
-  // Create the browser window as a popup window
-  mainWindow = new BrowserWindow({
-    width: windowWidth,
-    height: windowHeight,
-    x: x,
-    y: y,
-    show: false,
-    frame: false,
-    resizable: false,
-    movable: false,
-    fullscreenable: false,
-    skipTaskbar: true,
-    backgroundColor: '#333333',
+  // 创建新窗口
+  const detachedWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
+    show: true,
+    frame: true,
+    resizable: true,
+    movable: true,
+    fullscreenable: true,
+    skipTaskbar: false,
+    backgroundColor: '#ffffff',
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false,
@@ -58,14 +42,65 @@ function createWindow(): void {
     }
   })
 
-  // 隐藏菜单栏
-  mainWindow.setMenuBarVisibility(false)
+  // 设置窗口标题
+  detachedWindow.setTitle(title)
 
-  mainWindow.on('blur', () => {
-    if (mainWindow && !mainWindow.webContents.isDevToolsOpened()) {
-      mainWindow.hide()
+  // 存储窗口引用
+  openWindows.set(windowId, detachedWindow)
+
+  // 监听窗口关闭事件
+  detachedWindow.on('closed', () => {
+    openWindows.delete(windowId)
+  })
+
+  // 显示窗口
+  detachedWindow.show()
+  detachedWindow.focus()
+
+  // 加载内容
+  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+    detachedWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+  } else {
+    detachedWindow.loadFile(join(__dirname, '../renderer/index.html'))
+  }
+
+  return true
+}
+
+// 关闭独立窗口
+function closeDetachedWindow(windowId: string): boolean {
+  const window = openWindows.get(windowId)
+  if (window) {
+    window.close()
+    openWindows.delete(windowId)
+    return true
+  }
+  return false
+}
+
+function createWindow(): void {
+  // Create a regular application window
+  mainWindow = new BrowserWindow({
+    width: 1200,
+    height: 800,
+    show: true,
+    frame: true,
+    autoHideMenuBar: true,
+    resizable: true,
+    movable: true,
+    titleBarStyle: 'hiddenInset',
+    fullscreenable: true,
+    skipTaskbar: false,
+    backgroundColor: '#ffffff',
+    webPreferences: {
+      preload: join(__dirname, '../preload/index.js'),
+      sandbox: false,
+      contextIsolation: true
     }
   })
+
+  // 显示菜单栏
+  mainWindow.setMenuBarVisibility(true)
 
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
@@ -74,50 +109,6 @@ function createWindow(): void {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
-}
-
-function createTray(): void {
-  // 创建系统托盘图标
-  const trayIcon = nativeImage.createFromPath(join(__dirname, '../../resources/icon.png'))
-  tray = new Tray(trayIcon.resize({ width: 16, height: 16 }))
-  
-  // 不设置上下文菜单，只通过点击事件控制窗口显示/隐藏
-  tray.setIgnoreDoubleClickEvents(true)
-  
-  // 点击托盘图标切换窗口显示
-  tray.on('click', () => {
-    if (mainWindow) {
-      if (mainWindow.isVisible()) {
-        mainWindow.hide()
-      } else {
-        // 重新计算窗口位置
-        const trayBounds = tray?.getBounds() || { x: 0, y: 0, width: 0, height: 0 }
-        const display = screen.getDisplayNearestPoint({ x: trayBounds.x, y: trayBounds.y })
-        
-        const windowWidth = 800
-        const windowHeight = 600
-        let x = trayBounds.x + Math.floor(trayBounds.width / 2) - Math.floor(windowWidth / 2)
-        let y = trayBounds.y
-
-        if (x + windowWidth > display.workArea.x + display.workArea.width) {
-          x = display.workArea.x + display.workArea.width - windowWidth
-        }
-        if (x < display.workArea.x) {
-          x = display.workArea.x
-        }
-        
-        if (trayBounds.y > display.workArea.height / 2) {
-          y = trayBounds.y - windowHeight
-        } else {
-          y = trayBounds.y + trayBounds.height
-        }
-
-        mainWindow.setPosition(x, y, false)
-        mainWindow.show()
-        mainWindow.focus()
-      }
-    }
-  })
 }
 
 // 初始化数据管理器
@@ -189,6 +180,15 @@ function setupIPC(): void {
   ipcMain.handle('get-storage-path', async () => {
     return storageManager['dbPath']
   })
+
+  // 窗口管理 IPC 处理
+  ipcMain.handle('create-detached-window', async (_, windowId: string, title: string) => {
+    return await createDetachedWindow(windowId, title)
+  })
+
+  ipcMain.handle('close-detached-window', async (_, windowId: string) => {
+    return closeDetachedWindow(windowId)
+  })
 }
 
 // This method will be called when Electron has finished
@@ -198,9 +198,9 @@ app.whenReady().then(async () => {
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
 
-  // 隐藏 dock 图标 (macOS)
+  // 显示 dock 图标 (macOS) - 根据用户要求优化
   if (process.platform === 'darwin' && app.dock) {
-    app.dock.hide()
+    app.dock.show()
   }
 
   // Default open or close DevTools by F12 in development
@@ -213,10 +213,7 @@ app.whenReady().then(async () => {
   // 初始化数据管理器
   await initializeDataManagers()
 
-  // 创建系统托盘
-  createTray()
-
-  // 创建主窗口
+  // 创建主窗口（不再创建系统托盘）
   createWindow()
 
   // 设置 IPC 处理
@@ -238,12 +235,6 @@ app.on('window-all-closed', () => {
   }
 })
 
-// Cleanup on quit
-app.on('before-quit', () => {
-  if (tray) {
-    tray.destroy()
-  }
-})
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
